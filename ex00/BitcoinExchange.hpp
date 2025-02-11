@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 10:56:30 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/01/09 11:51:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/02/11 10:36:47 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,5 +30,6 @@ public:
 	BitcoinExchange& operator=(const BitcoinExchange& other) = delete;
 	~BitcoinExchange();
 	void populateExchangeRates();
+	void populateInputData();
 };
 

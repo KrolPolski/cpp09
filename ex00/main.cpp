@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 10:56:34 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/01/09 12:10:43 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/01/09 12:35:14 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ int main(int argc, char **argv)
 	try
 	{
 		BitcoinExchange btc(inputFileName);
-		btc.populateExchangeRates();
 	}
 	catch(const std::exception& e)
 	{
