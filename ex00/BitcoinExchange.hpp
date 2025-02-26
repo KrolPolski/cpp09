@@ -6,13 +6,15 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 10:56:30 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/02/11 10:36:47 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/02/26 14:08:21 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <map>
 #include <iostream>
 #include <fstream>
+#include <regex>
+#include <iomanip>
 
 class BitcoinExchange
 {
@@ -22,6 +24,8 @@ private:
 	std::string _inputFileName;
 	std::ifstream _inputFile;
 	std::ifstream _dataFile;
+	bool isValidDateFormat(const std::string& date);
+	bool isValidDate(const std::string& date);
 
 public:
 	BitcoinExchange() = delete;
