@@ -28,7 +28,7 @@ private:
 	bool isValidDate(const std::string& date);
 	float getConversionRate(const std::string& date);
 	const std::string getNearestDate(const std::string& date);
-	void ConvertData();
+	void convertData(std::pair<const std::string, float> item);
 
 public:
 	BitcoinExchange() = delete;

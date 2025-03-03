@@ -23,16 +23,16 @@ BitcoinExchange::BitcoinExchange(std::string inputFileName)
 		throw std::ios_base::failure("Failed to open data.csv");
 	populateExchangeRates();
 	populateInputData();
-	ConvertData();
+	//ConvertData();
 }
 
 BitcoinExchange::~BitcoinExchange()
 {	
 }
 
-void BitcoinExchange::ConvertData()
+void BitcoinExchange::convertData(std::pair<const std::string, float> item)
 {
-	for (std::pair<const std::string, float> item : _inputData)
+	//for (std::pair<const std::string, float> item : _inputData)
 	{
 		float value = getConversionRate(item.first) * item.second;
 		std::cout << item.first << " => " << item.second << " = " << value << std::endl;
@@ -48,7 +48,7 @@ const std::string BitcoinExchange::getNearestDate(const std::string& date)
 		iter--;
 
 	nearestDate = iter->first;
-	std::cout << "given " << date << ": we believe nearest date is " << nearestDate << std::endl;
+	//std::cout << "given " << date << ": we believe nearest date is " << nearestDate << std::endl;
 	return nearestDate;
 }
 
@@ -144,7 +144,7 @@ void BitcoinExchange::populateInputData()
 	{
 		delimiter = currLine.find('|');
 		if (delimiter == currLine.npos)
-			std::cout << "No delimiter found" << std::endl;
+			std::cout << "Error: no delimiter found" << std::endl;
 		else
 		{
 			date = currLine.substr(0, delimiter);
@@ -152,17 +152,31 @@ void BitcoinExchange::populateInputData()
 			if (date == "date")
 				continue ;
 				
-			value = stof(currLine.substr(delimiter + 1));
-			
-				std::cout << date << " | " << value << std::endl;
-				if (value > 1000 || value < 0)
-					std::cout << "Value outside of (0, 1000) range: " << value << std::endl;
+			try{
+				value = stof(currLine.substr(delimiter + 1));
+			}
+			catch (const std::exception& e)
+			{
+				std::cout << "Error: invalid value to be converted to float" << std::endl;
+			}
+				//std::cout << date << " | " << value << std::endl;
+				if (value > 1000)
+				
+					std::cout << "Error: too large a number." << std::endl;
+				else if (value < 0)
+					std::cout << "Error: not a positive number." << std::endl;
 				else
 				{
 					if (isValidDateFormat(date) && isValidDate(date))
-						_inputData.insert({date, value});
+					{
+						
+						std::pair<std::string, float> item {date, value};
+						_inputData.insert(item);
+						convertData(item);
+					}	
+					
 					else
-						std::cerr << "Invalid date: " << date << std::endl;
+						std::cerr << "Bad input => " << date << std::endl;
 				}
 		}
 	}
