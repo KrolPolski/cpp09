@@ -32,11 +32,8 @@ BitcoinExchange::~BitcoinExchange()
 
 void BitcoinExchange::convertData(std::pair<const std::string, float> item)
 {
-	//for (std::pair<const std::string, float> item : _inputData)
-	{
-		float value = getConversionRate(item.first) * item.second;
-		std::cout << item.first << " => " << item.second << " = " << value << std::endl;
-	}
+	float value = getConversionRate(item.first) * item.second;
+	std::cout << item.first << " => " << item.second << " = " << value << std::endl;
 }
 
 const std::string BitcoinExchange::getNearestDate(const std::string& date)
@@ -48,7 +45,6 @@ const std::string BitcoinExchange::getNearestDate(const std::string& date)
 		iter--;
 
 	nearestDate = iter->first;
-	//std::cout << "given " << date << ": we believe nearest date is " << nearestDate << std::endl;
 	return nearestDate;
 }
 
@@ -83,17 +79,10 @@ void BitcoinExchange::populateExchangeRates()
 			date = currLine.substr(0, delimiter);
 			if (date == "date")
 				continue ;
-			//std::cout << date << std::endl;
 			value = stof(currLine.substr(delimiter + 1));
-			//std::cout << currLine.substr(delimiter + 1) << " becomes " << value << std::endl;
 			_exchangeRates.insert({date, value});
 		}
 	}
-	/*std::cout << std::endl << "Now displaying map: " << std::endl;
-	for (const auto& pair : _exchangeRates)
-	{
-		std::cout << pair.first << ": " << pair.second << std::endl;
-	}*/
 }
 
 bool BitcoinExchange::isValidDateFormat(const std::string& date) 
@@ -157,9 +146,9 @@ void BitcoinExchange::populateInputData()
 			}
 			catch (const std::exception& e)
 			{
-				std::cout << "Error: invalid value to be converted to float" << std::endl;
+				std::cout << "Bad input => " << currLine << std::endl;
+				continue;
 			}
-				//std::cout << date << " | " << value << std::endl;
 				if (value > 1000)
 				
 					std::cout << "Error: too large a number." << std::endl;
@@ -176,7 +165,7 @@ void BitcoinExchange::populateInputData()
 					}	
 					
 					else
-						std::cerr << "Bad input => " << date << std::endl;
+						std::cerr << "Bad input => " << currLine << std::endl;
 				}
 		}
 	}

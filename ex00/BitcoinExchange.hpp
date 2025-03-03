@@ -14,7 +14,6 @@
 #include <iostream>
 #include <fstream>
 #include <regex>
-#include <iomanip>
 
 class BitcoinExchange
 {
