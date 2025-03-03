@@ -23,10 +23,30 @@ BitcoinExchange::BitcoinExchange(std::string inputFileName)
 		throw std::ios_base::failure("Failed to open data.csv");
 	populateExchangeRates();
 	populateInputData();
+	getNearestDate("2009-01-02");
 }
 
 BitcoinExchange::~BitcoinExchange()
 {	
+}
+
+const std::string BitcoinExchange::getNearestDate(const std::string& date)
+{
+	std::string nearestDate;
+
+	auto iter =_exchangeRates.lower_bound(date);
+	if (iter != _exchangeRates.begin())
+		iter--;
+
+	nearestDate = iter->first;
+	std::cout << "given " << date << ": we believe nearest date is " << nearestDate << std::endl;
+	return nearestDate;
+}
+
+float BitcoinExchange::getConversionRate(const std::string& date)
+{
+	getNearestDate(date);
+	return 1;
 }
 
 void BitcoinExchange::populateExchangeRates()

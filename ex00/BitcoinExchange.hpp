@@ -20,12 +20,14 @@ class BitcoinExchange
 {
 private:
 	std::multimap<std::string, float> _exchangeRates;
-	std::multimap<std::string, float> _inputData;
+	std::map<std::string, float> _inputData;
 	std::string _inputFileName;
 	std::ifstream _inputFile;
 	std::ifstream _dataFile;
 	bool isValidDateFormat(const std::string& date);
 	bool isValidDate(const std::string& date);
+	float getConversionRate(const std::string& date);
+	const std::string getNearestDate(const std::string& date);
 
 public:
 	BitcoinExchange() = delete;
