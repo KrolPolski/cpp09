@@ -23,11 +23,20 @@ BitcoinExchange::BitcoinExchange(std::string inputFileName)
 		throw std::ios_base::failure("Failed to open data.csv");
 	populateExchangeRates();
 	populateInputData();
-	getNearestDate("2009-01-02");
+	ConvertData();
 }
 
 BitcoinExchange::~BitcoinExchange()
 {	
+}
+
+void BitcoinExchange::ConvertData()
+{
+	for (std::pair<const std::string, float> item : _inputData)
+	{
+		float value = getConversionRate(item.first) * item.second;
+		std::cout << item.first << " => " << item.second << " = " << value << std::endl;
+	}
 }
 
 const std::string BitcoinExchange::getNearestDate(const std::string& date)
@@ -35,7 +44,7 @@ const std::string BitcoinExchange::getNearestDate(const std::string& date)
 	std::string nearestDate;
 
 	auto iter =_exchangeRates.lower_bound(date);
-	if (iter != _exchangeRates.begin())
+	if (iter != _exchangeRates.begin() && iter->first != date)
 		iter--;
 
 	nearestDate = iter->first;
@@ -45,8 +54,16 @@ const std::string BitcoinExchange::getNearestDate(const std::string& date)
 
 float BitcoinExchange::getConversionRate(const std::string& date)
 {
-	getNearestDate(date);
-	return 1;
+	std::string nearestDate = getNearestDate(date);
+	try
+	{
+		return _exchangeRates.at(nearestDate);
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "getConversionRate failed at " << nearestDate << " " << e.what() << std::endl;
+	}
+	return -1;
 }
 
 void BitcoinExchange::populateExchangeRates()
@@ -136,12 +153,17 @@ void BitcoinExchange::populateInputData()
 				continue ;
 				
 			value = stof(currLine.substr(delimiter + 1));
-			// garbage values?
-			std::cout << date << " | " << value << std::endl;
-			if (isValidDateFormat(date) && isValidDate(date))
-				_inputData.insert({date, value});
-			else
-				std::cerr << "Invalid date: " << date << std::endl;
+			
+				std::cout << date << " | " << value << std::endl;
+				if (value > 1000 || value < 0)
+					std::cout << "Value outside of (0, 1000) range: " << value << std::endl;
+				else
+				{
+					if (isValidDateFormat(date) && isValidDate(date))
+						_inputData.insert({date, value});
+					else
+						std::cerr << "Invalid date: " << date << std::endl;
+				}
 		}
 	}
 }
