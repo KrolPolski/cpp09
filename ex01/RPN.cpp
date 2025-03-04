@@ -6,14 +6,14 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:11:57 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/04 15:03:35 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/04 16:31:50 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RPN.hpp"
+#include <cstdlib>
 bool RPN::validateArgs()
 {
-    std::cout << "Inside validateArgs" << std::endl;
     std::istringstream iss(_args);
     std::string word;
     std::string allowed {"0123456789+-*/"};
@@ -28,22 +28,61 @@ bool RPN::validateArgs()
     return true;
 }
 
+void RPN::handleOperator(char c)
+{
+    if (_calcStack.size() < 2)
+    {
+        std::cerr << "Error: Not enough operands for operator " << c << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    double secondOperand = _calcStack.top();
+    _calcStack.pop();
+    double firstOperand = _calcStack.top();
+    _calcStack.pop();
+    switch (c) 
+    {
+        case '+':
+            _calcStack.push(firstOperand + secondOperand);
+            break;
+        case '-':
+            _calcStack.push(firstOperand - secondOperand);
+            break;
+        case '*':
+            _calcStack.push(firstOperand * secondOperand);
+            break;
+        case '/':
+            _calcStack.push(firstOperand / secondOperand);
+            break;
+        default: 
+            std::cerr << "Error: Invalid operator" << std::endl;
+            exit(EXIT_FAILURE);
+    }
+}
+
 double RPN::calculate()
 {
-   return 0; 
+    std::istringstream iss(_args);
+    std::string word;
+    
+    while (iss >> word)
+    {
+        if (std::isdigit(word[0]))
+            _calcStack.push(stod(word));
+        else
+            handleOperator(word[0]);
+    }
+    return (_calcStack.top());
 }
 
 RPN::RPN(std::string args) : _args(args)
 {
-    std::cout << "RPN constructor called" << std::endl;
-    std::cout << _args << std::endl;
     if (validateArgs())
-        calculate();
+        std::cout << calculate() << std::endl;
     else
         std::cerr << "Error" << std::endl;
 }
 
 RPN::~RPN()
 {
-    std::cout << "RPN destructor called" << std::endl;
 }
