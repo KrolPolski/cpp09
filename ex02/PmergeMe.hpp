@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/10 13:26:39 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/10 15:44:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,10 @@ private:
 	std::list<int> listSorted;
 	int _argc;
 	const char **rawArgs;
+	unsigned int vecComparisons {0};
 	bool validateArgs();
 	void sortPairsInPlace();
+	void vecSort(unsigned int elem_size);
 public:
 	PmergeMe() = delete;
 	PmergeMe(char **argv, int argc);
