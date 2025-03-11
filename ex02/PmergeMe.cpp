@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/11 13:26:49 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/11 13:44:03 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,16 @@ void PmergeMe::vecSort(unsigned int elem_size)
 {
 	auto iter = vecSorted.begin();
 	unsigned int k;
-	
+	unsigned int offset;
 	for (unsigned int i = 0; i * elem_size < vecSorted.size(); i += 2)
 	{
 		k = i * elem_size;
-		if (k + elem_size < vecSorted.size() && vecSorted[k] > vecSorted[k + elem_size])
+		offset = elem_size - 1;
+		if (k + elem_size + offset < vecSorted.size() && vecSorted[k + offset] > vecSorted[k + elem_size + offset])
 		{
 			std::swap_ranges(iter + k, iter + k + elem_size, iter + k + elem_size);
 		}
+		vecComparisons++;
 	}
 	std::cout << "iteration: ";
 	for (unsigned int l = 0; l < vecSorted.size(); l++)
