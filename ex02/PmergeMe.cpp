@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/11 13:44:03 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/11 13:48:50 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,14 @@ void PmergeMe::vecSort(unsigned int elem_size)
 	{
 		k = i * elem_size;
 		offset = elem_size - 1;
-		if (k + elem_size + offset < vecSorted.size() && vecSorted[k + offset] > vecSorted[k + elem_size + offset])
-		{
-			std::swap_ranges(iter + k, iter + k + elem_size, iter + k + elem_size);
+		if (k + elem_size + offset < vecSorted.size())
+		{ 
+			if(vecSorted[k + offset] > vecSorted[k + elem_size + offset])
+			{
+				std::swap_ranges(iter + k, iter + k + elem_size, iter + k + elem_size);
+			}
+			vecComparisons++;
 		}
-		vecComparisons++;
 	}
 	std::cout << "iteration: ";
 	for (unsigned int l = 0; l < vecSorted.size(); l++)
@@ -84,6 +87,7 @@ PmergeMe::PmergeMe(char **argv, int argc) :  _argc(argc), rawArgs((const char**)
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
 		std::cout << vecSorted[i] << ", ";
 	std::cout << std::endl;
+	std::cout << "vecComparisons so far: " << vecComparisons << std::endl;
 }
 PmergeMe::~PmergeMe()
 {
