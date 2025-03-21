@@ -6,13 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/11 13:48:50 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/21 13:16:33 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-void PmergeMe::sortPairsInPlace()
+/*void PmergeMe::sortPairsInPlace()
 {
 	for (unsigned int i = 0; i + 1 < vecSorted.size(); i += 2)
 	{
@@ -27,7 +27,7 @@ void PmergeMe::sortPairsInPlace()
 			std::cout << vecSorted[i] << " must be less than or equal to " << vecSorted[i+1] << std::endl;
 		}
 	}
-}
+}*/
 
 void PmergeMe::vecSort(unsigned int elem_size)
 {
@@ -53,6 +53,14 @@ void PmergeMe::vecSort(unsigned int elem_size)
 	std::cout << std::endl;
 	if (elem_size * 2 <= vecSorted.size())
 		vecSort(elem_size * 2);
+	if (k > 0 && k + offset < vecSorted.size())
+		{
+			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
+			std::cout << "Leftover element is ";
+			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
+				std::cout << vecSorted[a] << " ";
+			std::cout << std::endl;
+		}
 }
 bool PmergeMe::validateArgs() 
 {
