@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/24 13:58:29 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/24 14:45:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,15 +53,29 @@ void PmergeMe::vecSort(unsigned int elem_size)
 	std::cout << std::endl;
 	if (elem_size * 2 <= vecSorted.size())
 		vecSort(elem_size * 2);
+	std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
+	std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << mainChain[i] << " ";
+	std::cout << std::endl;
+	std::vector<int> pendChain;
+	
 	if (k > 0 && k + offset < vecSorted.size())
 		{
 			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
 			std::cout << "Leftover element is ";
 			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
-				std::cout << vecSorted[a] << " ";
+		{
+			std::cout << vecSorted[a] << " ";
+			pendChain.push_back(vecSorted[a]);
+		}		
 			std::cout << std::endl;
 			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
 			// that will need to be inserted based on vecSorted[k + offset]
+			std::cout << "pendChain is: ";
+			for (unsigned int i= 0; i < pendChain.size(); i++)
+				std::cout << pendChain[i] << " ";
+			std::cout << std::endl;
 		}
 }
 
