@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/21 13:16:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/24 13:58:29 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,29 @@ void PmergeMe::vecSort(unsigned int elem_size)
 			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
 				std::cout << vecSorted[a] << " ";
 			std::cout << std::endl;
+			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
+			// that will need to be inserted based on vecSorted[k + offset]
 		}
 }
+
+unsigned int PmergeMe::jacobsthalNumber(unsigned int n)
+{
+	// starts with 0 and 1, then we add the previous number plus double the number before that
+	// and we skip the first two to match the book
+	std::vector<unsigned int> jacobsthalNums(n + 1);
+	jacobsthalNums[0] = 1;
+	jacobsthalNums[1] = 3;
+	//std::cout << "Jacobsthal sequence: ";
+	//std::cout << jacobsthalNums[0] << " " << jacobsthalNums[1] << " ";
+	for (unsigned int i = 2; i <= n; i++)
+	{
+		jacobsthalNums[i] = jacobsthalNums[i-1] + (2 * jacobsthalNums[i - 2]);
+		//std::cout << jacobsthalNums[i] << " ";
+	}
+	//std::cout << std::endl;
+	return jacobsthalNums[n];
+}
+
 bool PmergeMe::validateArgs() 
 {
 	int num;
