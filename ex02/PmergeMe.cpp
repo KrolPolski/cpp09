@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/24 14:45:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:29:34 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,12 @@
 	}
 }*/
 
+void PmergeMe::binaryInsert(std::vector<int> mainChain, std::vector<int> pendChain, int elemSize, int nonParticipants)
+{
+	std::cout << "Begin binary insertion woo" << std::endl;
+	
+	
+}
 void PmergeMe::vecSort(unsigned int elem_size)
 {
 	auto iter = vecSorted.begin();
@@ -59,9 +65,9 @@ void PmergeMe::vecSort(unsigned int elem_size)
 		std::cout << mainChain[i] << " ";
 	std::cout << std::endl;
 	std::vector<int> pendChain;
-	
+	int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
 	if (k > 0 && k + offset < vecSorted.size())
-		{
+	{
 			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
 			std::cout << "Leftover element is ";
 			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
@@ -76,13 +82,34 @@ void PmergeMe::vecSort(unsigned int elem_size)
 			for (unsigned int i= 0; i < pendChain.size(); i++)
 				std::cout << pendChain[i] << " ";
 			std::cout << std::endl;
-		}
+	}
+	std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
+	binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+	// we need a way to flag nonparticipants;
+		// now we need to insert the pendChain
+	/*unsigned int pendLen = pendChain.size() / elem_size;
+	unsigned int currentJacobsthal = jacobsthalNumber(pendLen);
+	unsigned int previousJacobsthal;
+	std::cout << "currentJacobsthal: " << currentJacobsthal << std::endl;*/
+	//if (pendLen > 0)
+	//{
+	//	previousJacobsthal = jacobsthalNumber(pendLen - 1);
+//	}
+	//else
+	//	previousJacobsthal = 1;
+	//std::cout << "previousJacobsthal: " << previousJacobsthal << std::endl;
+	//unsigned int numInsertedElements = currentJacobsthal - previousJacobsthal;
+	//std::cout << "numInsertedElements: " << numInsertedElements << std::endl;
+	// not sure how this helps at all. but here is the failsafe:
+	// 
 }
 
 unsigned int PmergeMe::jacobsthalNumber(unsigned int n)
 {
 	// starts with 0 and 1, then we add the previous number plus double the number before that
 	// and we skip the first two to match the book
+	if (n == 0)
+		return 1;
 	std::vector<unsigned int> jacobsthalNums(n + 1);
 	jacobsthalNums[0] = 1;
 	jacobsthalNums[1] = 3;
