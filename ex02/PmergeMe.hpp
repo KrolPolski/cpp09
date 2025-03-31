@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/31 14:00:08 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/31 14:58:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ private:
 	//void sortPairsInPlace();
 	void vecSort(unsigned int elem_size);
 	unsigned int jacobsthalNumber(unsigned int n);
-	int binarySearchNthElement(const std::vector<int> mainChain, int target, int elemSize);
-	void binaryInsert(std::vector<int> mainChain, std::vector<int> pendChain, unsigned int elemSize, int nonParticipants);
+	int binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize);
+	void binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants);
 public:
 	PmergeMe() = delete;
 	PmergeMe(char **argv, int argc);

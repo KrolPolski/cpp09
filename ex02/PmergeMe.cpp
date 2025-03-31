@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/31 14:21:00 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/31 15:02:15 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 		}
 	}
 }*/
-int PmergeMe::binarySearchNthElement(const std::vector<int> mainChain, int target, int elemSize)
+int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize)
 {
 	//unsigned int offset = elemSize - 1;
 	//unsigned int totalElements = mainChain.size() / elemSize;
@@ -54,7 +54,7 @@ int PmergeMe::binarySearchNthElement(const std::vector<int> mainChain, int targe
 	return mid;	
 }
 
-void PmergeMe::binaryInsert(std::vector<int> mainChain, std::vector<int> pendChain, unsigned int elemSize, int nonParticipants)
+void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
 {
 	std::cout << "Begin binary insertion woo" << std::endl;
 	auto iter = mainChain.begin();
@@ -78,6 +78,11 @@ void PmergeMe::binaryInsert(std::vector<int> mainChain, std::vector<int> pendCha
 		for (unsigned int i = 0; i < mainChain.size(); i++)
 			std::cout << mainChain[i] << " ";
 		std::cout << std::endl;
+		std::cout << "Now overwriting vecSorted " << std::endl;
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+		{
+			vecSorted[i] = mainChain[i];
+		}
 	}
 }
 
