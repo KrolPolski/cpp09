@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/26 13:29:34 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/03/31 14:21:00 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,13 +28,59 @@
 		}
 	}
 }*/
+int PmergeMe::binarySearchNthElement(const std::vector<int> mainChain, int target, int elemSize)
+{
+	//unsigned int offset = elemSize - 1;
+	//unsigned int totalElements = mainChain.size() / elemSize;
+	int left = 0;
+	int mid = 0;
+	int right = (mainChain.size() - 1) / elemSize * elemSize;
+	while (left <= right) 
+	{
+		mid = left + (right - left) / (2 * elemSize) * elemSize;
+		if (mainChain[mid] == target)
+		{
+			vecComparisons++;
+			return mid;
+		}
+		if (mainChain[mid] < target)
+		{
+			vecComparisons++;
+			left = mid + elemSize;
+		}
+		else
+			right = mid - elemSize;
+	}
+	return mid;	
+}
 
-void PmergeMe::binaryInsert(std::vector<int> mainChain, std::vector<int> pendChain, int elemSize, int nonParticipants)
+void PmergeMe::binaryInsert(std::vector<int> mainChain, std::vector<int> pendChain, unsigned int elemSize, int nonParticipants)
 {
 	std::cout << "Begin binary insertion woo" << std::endl;
-	
-	
+	auto iter = mainChain.begin();
+	if (elemSize - 1 < pendChain.size())
+	{
+		std::cout << "Main chain ";
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+			std::cout << mainChain[i] << " ";
+		std::cout << std::endl;
+		std::cout << "Pending chain ";
+		for (unsigned int i = 0; i < pendChain.size(); i++)
+			std::cout << pendChain[i] << " ";
+		std::cout << std::endl;
+		std::cout << "We think first insertion should be based on pendChain[" << elemSize -1 << "] which is " << pendChain[elemSize - 1] << std::endl;
+		int mid = binarySearchNthElement(mainChain, pendChain[elemSize - 1], elemSize);
+		std::cout << "We think it should be inserted at mainChain[" << mid << "]" << std::endl;  
+		std::cout << "Non participants begin at: " << nonParticipants  << std::endl;
+		auto pendIter = pendChain.begin();
+		mainChain.insert(iter + mid, pendIter, pendIter + elemSize);
+		std::cout << "After insertion mainChain is now: ";
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+			std::cout << mainChain[i] << " ";
+		std::cout << std::endl;
+	}
 }
+
 void PmergeMe::vecSort(unsigned int elem_size)
 {
 	auto iter = vecSorted.begin();
