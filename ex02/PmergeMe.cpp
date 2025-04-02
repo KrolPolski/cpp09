@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/31 15:02:15 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/02 15:35:37 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,22 @@ int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int targ
 	return mid;	
 }
 
+void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain)
+{
+	// If we get here we know we are at an element size of 1 and are doing the final insertions.
+	// This is where we will use the Jacobsthal numbers.
+	// for now:
+	std::cout << "Hello from complexInsert!" << std::endl;
+	std::cout << "Main chain: ";
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << mainChain[i] << " ";
+	std::cout << std::endl;
+	std::cout << "pendChain: ";
+	for (unsigned int i = 0; i < pendChain.size(); i++)
+		std::cout << pendChain[i] << " ";
+	std::cout << std::endl;
+		
+}
 void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
 {
 	std::cout << "Begin binary insertion woo" << std::endl;
@@ -110,22 +126,24 @@ void PmergeMe::vecSort(unsigned int elem_size)
 	std::cout << std::endl;
 	if (elem_size * 2 <= vecSorted.size())
 		vecSort(elem_size * 2);
-	std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
-	std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
-	for (unsigned int i = 0; i < mainChain.size(); i++)
-		std::cout << mainChain[i] << " ";
-	std::cout << std::endl;
-	std::vector<int> pendChain;
-	int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
-	if (k > 0 && k + offset < vecSorted.size())
+	if (elem_size > 1)
 	{
+		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
+		std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+			std::cout << mainChain[i] << " ";
+		std::cout << std::endl;
+		std::vector<int> pendChain;
+		int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
+		if (k > 0 && k + offset < vecSorted.size())
+		{
 			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
 			std::cout << "Leftover element is ";
 			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
-		{
-			std::cout << vecSorted[a] << " ";
-			pendChain.push_back(vecSorted[a]);
-		}		
+			{
+				std::cout << vecSorted[a] << " ";
+				pendChain.push_back(vecSorted[a]);
+			}		
 			std::cout << std::endl;
 			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
 			// that will need to be inserted based on vecSorted[k + offset]
@@ -133,9 +151,16 @@ void PmergeMe::vecSort(unsigned int elem_size)
 			for (unsigned int i= 0; i < pendChain.size(); i++)
 				std::cout << pendChain[i] << " ";
 			std::cout << std::endl;
+		}
+		std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
+		binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
 	}
-	std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
-	binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+	else
+	{
+		std::vector<int> mainChain;
+		std::vector<int> pendChain;
+		complexInsert(mainChain, pendChain);
+	}
 	// we need a way to flag nonparticipants;
 		// now we need to insert the pendChain
 	/*unsigned int pendLen = pendChain.size() / elem_size;
