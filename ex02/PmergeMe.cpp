@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/02 15:35:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/02 15:51:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,9 @@ void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pend
 	// If we get here we know we are at an element size of 1 and are doing the final insertions.
 	// This is where we will use the Jacobsthal numbers.
 	// for now:
+	//unsigned int currJacobsthal = 3;
+	//unsigned int prevJacobsthal = 1;
+		
 	std::cout << "Hello from complexInsert!" << std::endl;
 	std::cout << "Main chain: ";
 	for (unsigned int i = 0; i < mainChain.size(); i++)
@@ -157,8 +160,19 @@ void PmergeMe::vecSort(unsigned int elem_size)
 	}
 	else
 	{
+		
 		std::vector<int> mainChain;
+		mainChain.push_back(vecSorted[0]);
+		for (unsigned int i = 1; i < vecSorted.size(); i += 2)
+			mainChain.push_back(vecSorted[i]);
 		std::vector<int> pendChain;
+		for (unsigned int i = 2; i < vecSorted.size(); i += 2)
+			pendChain.push_back(vecSorted[i]);
+		// We have to change the way these chains get built for the final case.
+		// we start from b3, do b2, then b5, b4, etc.
+		// use jacobsthal sequence until there aren't enough elements. 
+		// then just binary insertion.
+
 		complexInsert(mainChain, pendChain);
 	}
 	// we need a way to flag nonparticipants;
