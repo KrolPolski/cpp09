@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/02 15:51:30 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/02 17:56:45 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,13 @@ void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pend
 	// If we get here we know we are at an element size of 1 and are doing the final insertions.
 	// This is where we will use the Jacobsthal numbers.
 	// for now:
-	//unsigned int currJacobsthal = 3;
-	//unsigned int prevJacobsthal = 1;
-		
+	unsigned int jacobsthalN = 1;
+	unsigned int currJacobsthal = jacobsthalNumber(jacobsthalN); // applies to two indexes less than itself because
+	// b1 was already inserted into main chain and then because we count from 0.
+	unsigned int prevJacobsthal = jacobsthalNumber(jacobsthalN - 1);
+	
+	unsigned int jacobsthalOffset = 2;
+	// how are we going to handle the indexes?
 	std::cout << "Hello from complexInsert!" << std::endl;
 	std::cout << "Main chain: ";
 	for (unsigned int i = 0; i < mainChain.size(); i++)
@@ -71,7 +75,55 @@ void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pend
 	for (unsigned int i = 0; i < pendChain.size(); i++)
 		std::cout << pendChain[i] << " ";
 	std::cout << std::endl;
-		
+	int currIndex;
+	unsigned int insertionCount;
+	while (pendChain.size() > 0)
+	{
+		currIndex = currJacobsthal - jacobsthalOffset;
+		insertionCount = currJacobsthal - prevJacobsthal;
+		if (insertionCount > pendChain.size())
+			break;
+		while (currIndex >= 0 && insertionCount > 0 && pendChain.size() > insertionCount)
+		{
+			//binary insertion using lower_bound? Yeah that's probably the right call.
+			auto iter = std::lower_bound(mainChain.begin(), mainChain.end(), pendChain[currIndex]);
+			mainChain.insert(iter, pendChain[currIndex]);
+			pendChain.erase(pendChain.begin() + currIndex);
+			currIndex--;
+			jacobsthalOffset++;
+			insertionCount--;
+		}
+		prevJacobsthal = currJacobsthal;
+		jacobsthalN++;
+		currJacobsthal = jacobsthalNumber(jacobsthalN);
+		std::cout << "After a set of jacobsthal number insertions" << std::endl;
+		std::cout << "Main chain: ";
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+			std::cout << mainChain[i] << " ";
+		std::cout << std::endl;
+		std::cout << "pendChain: ";
+		for (unsigned int i = 0; i < pendChain.size(); i++)
+			std::cout << pendChain[i] << " ";
+		std::cout << std::endl;
+	}
+	while (pendChain.size() > 0)
+	{
+		currIndex = (pendChain.size() - 1);
+		auto iter = std::lower_bound(mainChain.begin(), mainChain.end(), pendChain[currIndex]);
+		mainChain.insert(iter, pendChain[currIndex]);
+		pendChain.erase(pendChain.begin() + currIndex);
+	}
+	std::cout << "In theory we are done!" << std::endl;
+	std::cout << "Main chain: ";
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << mainChain[i] << " ";
+	std::cout << std::endl;
+	std::cout << "pendChain: ";
+	for (unsigned int i = 0; i < pendChain.size(); i++)
+		std::cout << pendChain[i] << " ";
+	std::cout << std::endl;
+	for (unsigned int i = 0; i < vecSorted.size(); i++)
+		vecSorted[i] = mainChain[i];
 }
 void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
 {
