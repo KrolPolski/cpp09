@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/02 17:56:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:43:44 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,6 +157,8 @@ void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendC
 	}
 }
 
+
+
 void PmergeMe::vecSort(unsigned int elem_size)
 {
 	auto iter = vecSorted.begin();
@@ -183,32 +185,36 @@ void PmergeMe::vecSort(unsigned int elem_size)
 		vecSort(elem_size * 2);
 	if (elem_size > 1)
 	{
-		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
+		if (vecSorted.size() / elem_size > 1)
+		{
+		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin() + elem_size * 2);
+		std::vector<int> pendChain; //(vecSorted.begin() + 2 * elem_size, vecSorted.begin() + 3 * elem_size);
+		//for (unsigned int n = 3; (n + 1) * elem_size < vecSorted.size(); n += 2)
+		// {
+		// 	for (unsigned int i = 0; i < elem_size; i++)
+		// 	{
+		// 		mainChain.push_back(vecSorted[n * elem_size + i]);
+		// 	}
+		// }
+		// for (unsigned int n = 2; (n + 1) * elem_size < vecSorted.size(); n += 2)
+		// {
+		// 	for (unsigned int i = 0; i < elem_size; i++)
+		// 	{
+		// 		pendChain.push_back(vecSorted[n * elem_size + i]);
+		// 	}
+		// }
 		std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
 		for (unsigned int i = 0; i < mainChain.size(); i++)
 			std::cout << mainChain[i] << " ";
 		std::cout << std::endl;
-		std::vector<int> pendChain;
-		int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
-		if (k > 0 && k + offset < vecSorted.size())
-		{
-			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
-			std::cout << "Leftover element is ";
-			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
-			{
-				std::cout << vecSorted[a] << " ";
-				pendChain.push_back(vecSorted[a]);
-			}		
-			std::cout << std::endl;
-			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
-			// that will need to be inserted based on vecSorted[k + offset]
-			std::cout << "pendChain is: ";
-			for (unsigned int i= 0; i < pendChain.size(); i++)
-				std::cout << pendChain[i] << " ";
-			std::cout << std::endl;
+		std::cout << "pendChain is: ";
+		for (unsigned int i= 0; i < pendChain.size(); i++)
+			std::cout << pendChain[i] << " ";
+		std::cout << std::endl;
 		}
-		std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
-		binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+		// }
+		// std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
+		// binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
 	}
 	else
 	{
