@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/03 15:47:00 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/03 16:09:11 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,30 +79,35 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		while (insertionCount > 0)
 		{
 			int sortValueIndex = currIndex * elemSize + elemSize - 1;
+			int actualPendIndex = currIndex * elemSize;
 			if (sortValueIndex < 0)
 				break;
 			if ((size_t)sortValueIndex >= pendChain.size() && pendChain.size() < elemSize)
 				break ;
 			if ((size_t)sortValueIndex >= pendChain.size())
+			{
 				sortValueIndex = elemSize - 1;
-			if (sortValueIndex < pendChain.size())
-		 	{
+				actualPendIndex = 0;
+			}
+			//if (sortValueIndex < pendChain.size())
+		 	//{
 				auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortValueIndex], elemSize);
 		 		std::cout << "SortValueIndex: " << sortValueIndex << " Value: " << pendChain[sortValueIndex] << " we believe this should be inserted before ";
 				if (iter != mainChain.end())
 					std::cout << *iter << std::endl;
 				else
 					std::cout << "the end" << std::endl;
-		 		break ;
-			}
-		// 	int actualIndex = currIndex * elemSize;
+		 		//break ;
 			
-		// 	for (size_t i = 0; i < elemSize; i++)
-		// 	{
-		// 		std::cout << "Attempting insertion of pendChain[" << actualIndex + i << "]";
-		// 		mainChain.insert(iter, pendChain[actualIndex + i]);
-		// 		processed[actualIndex + i] = true;
-		// 	}
+		 	
+			
+		 	//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
+			{
+		 		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
+		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
+		 		//processed[actualPendIndex + i] = true;
+		 	}
+		break ;
 		}
 		break ;
 	}
