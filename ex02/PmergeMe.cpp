@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/03 16:09:11 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/03 16:23:58 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		if (currIndex < 0)
 			break;
 		int insertionCount = currJacobsthal - prevJacobsthal;
-		while (insertionCount > 0)
+		while (insertionCount > 0 && currIndex >= 0)
 		{
 			int sortValueIndex = currIndex * elemSize + elemSize - 1;
 			int actualPendIndex = currIndex * elemSize;
@@ -104,10 +104,14 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		 	//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
 			{
 		 		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
+				// add protection for duplicate insertions maybe? is that even possible? may not be since we aren't removing stuff now
 		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
-		 		//processed[actualPendIndex + i] = true;
+		 //		for (size_t i = 0; i < elemSize; i++)
+		//			processed[actualPendIndex + i] = true;
 		 	}
-		break ;
+		//insertionCount--;
+		//currIndex--;
+		break;
 		}
 		break ;
 	}
