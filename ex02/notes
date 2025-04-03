@@ -1,3 +1,7 @@
 ./PmergeMe 10 1 9 2 6 3 4 7 5 8 11 12 13
 
 This doesn't sort properly at present. Something is wrong with my recursion unwinding.
+
+Check COMPILER FLAGS
+
+Our template function for comparisons isn't actually using binary search. It needs to.
