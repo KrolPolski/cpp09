@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/03 14:29:25 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/03 15:14:23 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,10 @@ private:
 	unsigned int vecComparisons {0};
 	bool validateArgs();
 	//void sortPairsInPlace();
-	void vecSort(unsigned int elem_size);
+	void vecSort(unsigned int elemSize);
 	unsigned int jacobsthalNumber(unsigned int n);
 	int binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize);
+	void complexMultiInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize);
 	void complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain);
 	void binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants);
 	template<typename Iterator, typename T>
@@ -46,8 +47,8 @@ template<typename Iterator, typename T>
 Iterator PmergeMe::partial_lower_bound(Iterator first, Iterator last, const T& value, size_t elemSize) 
 {
     Iterator it = first;
-    for (size_t i = elemSize - 1; it < last; it += elemSize, i++) {
-        if (*it >= value) {
+    for (size_t i = elemSize - 1; it < last; it += elemSize) {
+        if (*(it + i) >= value) {
             return it;
         }
     }
