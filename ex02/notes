@@ -1,6 +1,9 @@
 ./PmergeMe 10 1 9 2 6 3 4 7 5 8 11 12 13
 
-This doesn't sort properly at present. Something is wrong with my recursion unwinding.
+FIXED: This doesn't sort properly at present. Something is wrong with my recursion unwinding.
+
+STILL NEED: to deal with nonparticipants or odd elements in ComplexInsert(), we sometimes have the last 
+item in the wrong place.
 
 Check COMPILER FLAGS
 

@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/04 13:26:22 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/04 15:53:47 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		 		//break ;
 		 	//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
 			{
-		 		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
+		 		std::cout << "Attempting insertion of pendChain" << std::endl;//[" << actualPendIndex + i << "]";
 				// add protection for duplicate insertions maybe? is that even possible? may not be since we aren't removing stuff now
 		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
 		 		for (size_t i = 0; i < elemSize; i++)
@@ -131,6 +131,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 	// doing jacobsthal insertions)
 	while (countUnprocessed(processed) >= elemSize)
 	{
+		std::cout << "We have this many numbers unprocessed: " << countUnprocessed(processed) << std::endl;
 		int firstUnprocessedIndex {0};
 		for (size_t i = 0; i < processed.size(); i++)
 		{
@@ -149,7 +150,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 			std::cout << "the end" << std::endl;
 			//break ;
 		//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
-		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
+		std::cout << "Attempting insertion of pendChain" << std::endl;//[" << actualPendIndex + i << "]";
 		// add protection for duplicate insertions maybe? is that even possible? may not be since we aren't removing stuff now
 		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
 		for (size_t i = 0; i < elemSize; i++)
@@ -162,9 +163,15 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		vecSorted[i] = mainChain[i];
 		std::cout << vecSorted[i] << " ";
 	}
+	if (mainChain.size() < vecSorted.size())
+	{
+		std::cout << "Remaining non-participants: ";
+		for (size_t i = mainChain.size(); i < vecSorted.size(); i++)
+			std::cout << vecSorted[i] << " ";
+	}
 	std::cout << std::endl;
 }
-void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain)
+/*void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain)
 {
 	// If we get here we know we are at an element size of 1 and are doing the final insertions.
 	// This is where we will use the Jacobsthal numbers.
@@ -234,7 +241,7 @@ void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pend
 	std::cout << std::endl;
 	for (unsigned int i = 0; i < vecSorted.size(); i++)
 		vecSorted[i] = mainChain[i];
-}
+}*/
 /*void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
 {
 	std::cout << "Begin binary insertion woo" << std::endl;
@@ -332,21 +339,35 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		
 		std::vector<int> mainChain;
 		mainChain.push_back(vecSorted[0]);
-		for (unsigned int i = 1; i < vecSorted.size(); i += 2)
-			mainChain.push_back(vecSorted[i]);
 		std::vector<int> pendChain;
-		for (unsigned int i = 2; i < vecSorted.size(); i += 2)
-			pendChain.push_back(vecSorted[i]);
+		if ((vecSorted.size() / elemSize) % 2 == 0)
+		{
+			std::cout << "We decided we have an even number of elements" << std::endl;
+			for (unsigned int i = 1; i < vecSorted.size() - 2; i += 2)
+				mainChain.push_back(vecSorted[i]);
+			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
+				pendChain.push_back(vecSorted[i]);
+			pendChain.push_back(vecSorted[vecSorted.size() - 1]);
+		}
+		else
+		{
+			std::cout << "We decided we have an odd number of elements" << std::endl;
+			for (unsigned int i = 1; i < vecSorted.size(); i += 2)
+				mainChain.push_back(vecSorted[i]);
+			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
+				pendChain.push_back(vecSorted[i]);
+			//pendChain.push_back(vecSorted[vecSorted.size() - 1]);
+		}
 		// We have to change the way these chains get built for the final case.
 		// we start from b3, do b2, then b5, b4, etc.
 		// use jacobsthal sequence until there aren't enough elements. 
 		// then just binary insertion.
 
-		complexInsert(mainChain, pendChain);
-	}
+		complexMultiInsert(mainChain, pendChain, elemSize);
+	}/*/
 	// we need a way to flag nonparticipants;
 		// now we need to insert the pendChain
-	/*unsigned int pendLen = pendChain.size() / elemSize;
+	unsigned int pendLen = pendChain.size() / elemSize;
 	unsigned int currentJacobsthal = jacobsthalNumber(pendLen);
 	unsigned int previousJacobsthal;
 	std::cout << "currentJacobsthal: " << currentJacobsthal << std::endl;*/
