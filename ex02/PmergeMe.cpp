@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/03 16:23:58 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/04 13:26:22 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,18 @@
 	}
 	return mid;	
 }*/
+
+unsigned int PmergeMe::countUnprocessed(std::vector<bool>& processed)
+{
+	unsigned int unProcessed {0};
+	for (size_t i = 0; i < processed.size(); i++)
+	{
+		if (!processed[i])
+			unProcessed++;
+	}
+	return unProcessed;
+}
+
 void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize)
 {
 	std::cout << "Hello from complexMultiInsert for elemSize: " << elemSize << std::endl;
@@ -70,7 +82,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 	unsigned int currJacobsthal = jacobsthalNumber(jacobsthalN); // applies to two indexes less than itself because
 	// b1 was already inserted into main chain and then because we count from 0.
 	unsigned int prevJacobsthal = jacobsthalNumber(jacobsthalN - 1);
-	while (true)
+	while (currJacobsthal - 2 < pendChain.size() / elemSize)
 	{
 		int currIndex = currJacobsthal - 2;
 		if (currIndex < 0)
@@ -98,23 +110,52 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 				else
 					std::cout << "the end" << std::endl;
 		 		//break ;
-			
-		 	
-			
 		 	//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
 			{
 		 		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
 				// add protection for duplicate insertions maybe? is that even possible? may not be since we aren't removing stuff now
 		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
-		 //		for (size_t i = 0; i < elemSize; i++)
-		//			processed[actualPendIndex + i] = true;
+		 		for (size_t i = 0; i < elemSize; i++)
+					processed[actualPendIndex + i] = true;
 		 	}
-		//insertionCount--;
-		//currIndex--;
-		break;
+		insertionCount--;
+		currIndex--;
+		//break;
 		}
-		break ;
+		prevJacobsthal = currJacobsthal;
+		jacobsthalN++;
+		currJacobsthal = jacobsthalNumber(jacobsthalN);
+		//break ;
 	}
+	// now we have to account for extra insertions if required (if we have complete elements left after
+	// doing jacobsthal insertions)
+	while (countUnprocessed(processed) >= elemSize)
+	{
+		int firstUnprocessedIndex {0};
+		for (size_t i = 0; i < processed.size(); i++)
+		{
+			if (!processed[i])
+			{
+				firstUnprocessedIndex = i;
+				break ;
+			}
+		}
+		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
+		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
+		std::cout << "SortableIndex: " << sortableIndex << " Value: " << pendChain[sortableIndex] << " we believe this should be inserted before ";
+		if (iter != mainChain.end())
+				std::cout << *iter << std::endl;
+		else
+			std::cout << "the end" << std::endl;
+			//break ;
+		//for (size_t i = 0; i == 0 && i < elemSize && actualPendIndex + i < pendChain.size(); i++)
+		std::cout << "Attempting insertion of pendChain";//[" << actualPendIndex + i << "]";
+		// add protection for duplicate insertions maybe? is that even possible? may not be since we aren't removing stuff now
+		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);//pendChain[actualPendIndex + i]);//[actualPendIndex + i]);
+		for (size_t i = 0; i < elemSize; i++)
+			processed[firstUnprocessedIndex + i] = true;
+	}
+	
 	std::cout << "All done, vecSorted now: ";
 	for (size_t i = 0; i < mainChain.size(); i++)
 	{

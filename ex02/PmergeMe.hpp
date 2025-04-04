@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/03 15:14:23 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/04 13:27:05 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ private:
 	void binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants);
 	template<typename Iterator, typename T>
 	Iterator partial_lower_bound(Iterator first, Iterator last, const T& value, size_t elemSize);
+	unsigned int countUnprocessed(std::vector<bool>& processed);
 public:
 	PmergeMe() = delete;
 	PmergeMe(char **argv, int argc);
