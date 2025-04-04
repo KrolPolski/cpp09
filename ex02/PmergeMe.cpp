@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/02 17:56:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/03 11:50:03 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 		}
 	}
 }*/
-int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize)
+/*int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize)
 {
 	//unsigned int offset = elemSize - 1;
 	//unsigned int totalElements = mainChain.size() / elemSize;
@@ -52,8 +52,89 @@ int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int targ
 			right = mid - elemSize;
 	}
 	return mid;	
+}*/
+void PmergeMe::complexMultipleInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elem_size)
+{
+	// If we get here we know we are at an element size of 1 and are doing the final insertions.
+	// This is where we will use the Jacobsthal numbers.
+	// for now:
+	unsigned int jacobsthalN = 1;
+	unsigned int currJacobsthal = jacobsthalNumber(jacobsthalN); // applies to two indexes less than itself because
+	// b1 was already inserted into main chain and then because we count from 0.
+	unsigned int prevJacobsthal = jacobsthalNumber(jacobsthalN - 1);
+	
+	unsigned int jacobsthalOffset = 2;
+	// how are we going to handle the indexes?
+	std::cout << "Hello from complexInsert!" << std::endl;
+	std::cout << "Main chain: ";
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << mainChain[i] << " ";
+	std::cout << std::endl;
+	std::cout << "pendChain: ";
+	for (unsigned int i = 0; i < pendChain.size(); i++)
+		std::cout << pendChain[i] << " ";
+	std::cout << std::endl;
+	int currIndex;
+	unsigned int insertionCount;
+	while (pendChain.size() / elem_size > 0)
+	{
+		currIndex = currJacobsthal - jacobsthalOffset;
+		if (currIndex < 0)
+			break ;
+		insertionCount = currJacobsthal - prevJacobsthal;
+		if (insertionCount * elem_size > pendChain.size())
+			break;
+		std::vector<int> compValues;
+		for (size_t i = elem_size - 1; i < mainChain.size(); i += elem_size)
+		{
+			compValues.push_back(mainChain[i]);
+		}
+		while (currIndex >= 0 && insertionCount > 0 && pendChain.size() > (currIndex + 1) * elem_size && pendChain.size() > (insertionCount + 1) * elem_size)
+		{
+			//binary insertion using lower_bound? Yeah that's probably the right call.
+			auto iter = std::lower_bound(compValues.begin(), compValues.end(), pendChain[(currIndex + 1) * elem_size - 1]);
+			// convert index back to the main chain correct position
+			size_t index = std::distance(compValues.begin(), iter) * elem_size;
+			// now we need to do multiple insertion woo
+			auto mainChainIter = mainChain.begin() + index;
+			mainChain.insert(mainChainIter, pendChain.begin() + currIndex * elem_size, pendChain.begin() + (currIndex + 1) * elem_size);
+			pendChain.erase(pendChain.begin() + currIndex * elem_size, pendChain.begin() + currIndex * elem_size + elem_size);
+			currIndex--;
+			jacobsthalOffset++;
+			insertionCount--;
+		}
+		prevJacobsthal = currJacobsthal;
+		jacobsthalN++;
+		currJacobsthal = jacobsthalNumber(jacobsthalN);
+		std::cout << "After a set of jacobsthal number insertions" << std::endl;
+		std::cout << "Main chain: ";
+		for (unsigned int i = 0; i < mainChain.size(); i++)
+			std::cout << mainChain[i] << " ";
+		std::cout << std::endl;
+		std::cout << "pendChain: ";
+		for (unsigned int i = 0; i < pendChain.size(); i++)
+			std::cout << pendChain[i] << " ";
+		std::cout << std::endl;
+	}
+	/*while (pendChain.size() > 0)
+	{
+		currIndex = (pendChain.size() - 1);
+		auto iter = std::lower_bound(mainChain.begin(), mainChain.end(), pendChain[currIndex]);
+		mainChain.insert(iter, pendChain[currIndex]);
+		pendChain.erase(pendChain.begin() + currIndex);
+	}*/
+	std::cout << "In theory we are done!" << std::endl;
+	std::cout << "Main chain: ";
+	for (unsigned int i = 0; i < mainChain.size(); i++)
+		std::cout << mainChain[i] << " ";
+	std::cout << std::endl;
+	std::cout << "pendChain: ";
+	for (unsigned int i = 0; i < pendChain.size(); i++)
+		std::cout << pendChain[i] << " ";
+	std::cout << std::endl;
+	for (unsigned int i = 0; i < vecSorted.size(); i++)
+		vecSorted[i] = mainChain[i];
 }
-
 void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain)
 {
 	// If we get here we know we are at an element size of 1 and are doing the final insertions.
@@ -125,7 +206,7 @@ void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pend
 	for (unsigned int i = 0; i < vecSorted.size(); i++)
 		vecSorted[i] = mainChain[i];
 }
-void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
+/*void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
 {
 	std::cout << "Begin binary insertion woo" << std::endl;
 	auto iter = mainChain.begin();
@@ -155,7 +236,7 @@ void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendC
 			vecSorted[i] = mainChain[i];
 		}
 	}
-}
+}*/
 
 void PmergeMe::vecSort(unsigned int elem_size)
 {
@@ -183,36 +264,43 @@ void PmergeMe::vecSort(unsigned int elem_size)
 		vecSort(elem_size * 2);
 	if (elem_size > 1)
 	{
-		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
+		// start with b1 and a1
+		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin() + elem_size * 2);
+		// continue with a2, a3, etc.
+		// n represents the element. i represents the numbers inside the element.
+		for (unsigned int n = 3; n * elem_size < vecSorted.size(); n += 2)
+		{
+			for (unsigned int i = 0; i < elem_size; i++)
+			{
+				// n * elem_size is beginning of the element
+				int index = n * elem_size + i;
+				mainChain.push_back(vecSorted[index]);
+			}
+		}
+		std::vector<int> pendChain;
+		for (unsigned int n = 2; n * elem_size < vecSorted.size(); n += 2)
+		{
+			for (unsigned int i = 0; i < elem_size; i++)
+			{
+				// let's catch the even elements (b2, b3 etc)
+				int index = n * elem_size + i;
+				pendChain.push_back(vecSorted[index]);
+			}
+		}
 		std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
 		for (unsigned int i = 0; i < mainChain.size(); i++)
 			std::cout << mainChain[i] << " ";
 		std::cout << std::endl;
-		std::vector<int> pendChain;
-		int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
-		if (k > 0 && k + offset < vecSorted.size())
-		{
-			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
-			std::cout << "Leftover element is ";
-			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
-			{
-				std::cout << vecSorted[a] << " ";
-				pendChain.push_back(vecSorted[a]);
-			}		
-			std::cout << std::endl;
-			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
-			// that will need to be inserted based on vecSorted[k + offset]
-			std::cout << "pendChain is: ";
-			for (unsigned int i= 0; i < pendChain.size(); i++)
-				std::cout << pendChain[i] << " ";
-			std::cout << std::endl;
-		}
-		std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
-		binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+		std::cout << "pendChain is: ";
+		for (unsigned int i= 0; i < pendChain.size(); i++)
+			std::cout << pendChain[i] << " ";
+		std::cout << std::endl;
+		complexMultipleInsert(mainChain, pendChain, elem_size);
 	}
+		//binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+	
 	else
 	{
-		
 		std::vector<int> mainChain;
 		mainChain.push_back(vecSorted[0]);
 		for (unsigned int i = 1; i < vecSorted.size(); i += 2)
