@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/04 15:53:47 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/04 16:30:20 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -306,19 +306,53 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		{
 		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin() + elemSize * 2);
 		std::vector<int> pendChain;//(vecSorted.begin() + 2 * elemSize, vecSorted.begin() + 3 * elemSize);
-		for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
-		{
-			for (unsigned int i = 0; i < elemSize; i++)
+		if ((vecSorted.size() / elemSize) % 2 == 0)
+		{ 
+			std::cout << "We've decided we have an even number of participating elements" << std::endl;
+			for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
 			{
-				mainChain.push_back(vecSorted[n * elemSize + i]);
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(vecSorted[n * elemSize + i]);
+				}
 			}
-		}
-		for (unsigned int n = 2; (n + 1) * elemSize < vecSorted.size(); n += 2)
-		{
+			for (unsigned int n = 2; (n + 1) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			unsigned int n = (vecSorted.size() / elemSize) - 1;
+			std::cout << "Going to attempt to insert n: " << n << " to the pend Chain" << std::endl;
 			for (unsigned int i = 0; i < elemSize; i++)
 			{
 				pendChain.push_back(vecSorted[n * elemSize + i]);
 			}
+		}
+		else
+		{
+			std::cout << "We've decided we have an odd number of participating elements" << std::endl;
+			for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			for (unsigned int n = 2; (n) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			/*unsigned int n = (vecSorted.size() / elemSize) - 1;
+			std::cout << "Going to attempt to insert n: " << n << " to the pend Chain" << std::endl;
+			for (unsigned int i = 0; i < elemSize && n * elemSize + i < vecSorted.size(); i++)
+			{
+				pendChain.push_back(vecSorted[n * elemSize + i]);
+			}*/
 		}
 		std::cout << "For element size: " << elemSize << " the main chain is: " << std::endl;
 		for (unsigned int i = 0; i < mainChain.size(); i++)
