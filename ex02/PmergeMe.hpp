@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/04 15:12:44 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:50:49 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,10 @@ private:
 	const char **rawArgs;
 	unsigned int vecComparisons {0};
 	bool validateArgs();
-	//void sortPairsInPlace();
 	void vecSort(unsigned int elemSize);
 	unsigned int jacobsthalNumber(unsigned int n);
 	int binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize);
 	void complexMultiInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize);
-	//void complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain);
 	void binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants);
 	template<typename Iterator, typename T>
 	Iterator partial_lower_bound(Iterator first, Iterator last, const T& value, size_t elemSize);
