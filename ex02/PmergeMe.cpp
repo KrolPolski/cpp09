@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 12:49:37 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:20:33 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,15 @@ unsigned int PmergeMe::countUnprocessed(std::vector<bool>& processed)
 
 void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize)
 {
-	std::cout << "Hello from complexMultiInsert for elemSize: " << elemSize << std::endl;
-	std::cout << "Main chain: ";
-	for (unsigned int i = 0; i < mainChain.size(); i++)
-		std::cout << mainChain[i] << " ";
-	std::cout << std::endl;
-	std::cout << "pendChain: ";
-	for (unsigned int i = 0; i < pendChain.size(); i++)
-		std::cout << pendChain[i] << " ";
-	std::cout << std::endl;
+	//std::cout << "Hello from complexMultiInsert for elemSize: " << elemSize << std::endl;
+	//std::cout << "Main chain: ";
+	//for (unsigned int i = 0; i < mainChain.size(); i++)
+	//	std::cout << mainChain[i] << " ";
+	//std::cout << std::endl;
+	//std::cout << "pendChain: ";
+	// for (unsigned int i = 0; i < pendChain.size(); i++)
+	// 	std::cout << pendChain[i] << " ";
+	// std::cout << std::endl;
 	std::vector<bool> processed(pendChain.size(), false); // this keeps track of what has already been inserted.
 	
 	unsigned int jacobsthalN = 1;
@@ -60,17 +60,17 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 				actualPendIndex = 0;
 			}
 				auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortValueIndex], elemSize);
-		 		std::cout << "SortValueIndex: " << sortValueIndex << " Value: " << pendChain[sortValueIndex] << " we believe this should be inserted before ";
-				if (iter != mainChain.end())
-					std::cout << *iter << std::endl;
-				else
-					std::cout << "the end" << std::endl;
-			{
-		 		std::cout << "Attempting insertion of pendChain" << std::endl;
+		 	// 	std::cout << "SortValueIndex: " << sortValueIndex << " Value: " << pendChain[sortValueIndex] << " we believe this should be inserted before ";
+			// 	if (iter != mainChain.end())
+			// 		std::cout << *iter << std::endl;
+			// 	else
+			// 		std::cout << "the end" << std::endl;
+			
+		 	// 	std::cout << "Attempting insertion of pendChain" << std::endl;
 		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);
 		 		for (size_t i = 0; i < elemSize; i++)
 					processed[actualPendIndex + i] = true;
-		 	}
+		 	
 		insertionCount--;
 		currIndex--;
 		}
@@ -82,7 +82,7 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 	// doing jacobsthal insertions)
 	while (countUnprocessed(processed) >= elemSize)
 	{
-		std::cout << "We have this many numbers unprocessed: " << countUnprocessed(processed) << std::endl;
+		// std::cout << "We have this many numbers unprocessed: " << countUnprocessed(processed) << std::endl;
 		int firstUnprocessedIndex {0};
 		for (size_t i = 0; i < processed.size(); i++)
 		{
@@ -94,29 +94,29 @@ void PmergeMe::complexMultiInsert(std::vector<int>& mainChain, std::vector<int>&
 		}
 		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
 		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
-		std::cout << "SortableIndex: " << sortableIndex << " Value: " << pendChain[sortableIndex] << " we believe this should be inserted before ";
-		if (iter != mainChain.end())
-				std::cout << *iter << std::endl;
-		else
-			std::cout << "the end" << std::endl;
-		std::cout << "Attempting insertion of pendChain" << std::endl;
+		//std::cout << "SortableIndex: " << sortableIndex << " Value: " << pendChain[sortableIndex] << " we believe this should be inserted before ";
+		// if (iter != mainChain.end())
+		// 		std::cout << *iter << std::endl;
+		// else
+		// 	std::cout << "the end" << std::endl;
+		// std::cout << "Attempting insertion of pendChain" << std::endl;
 		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);
 		for (size_t i = 0; i < elemSize; i++)
 			processed[firstUnprocessedIndex + i] = true;
 	}
-	std::cout << "All done, vecSorted now: ";
+	//std::cout << "All done, vecSorted now: ";
 	for (size_t i = 0; i < mainChain.size(); i++)
 	{
 		vecSorted[i] = mainChain[i];
-		std::cout << vecSorted[i] << " ";
+		//std::cout << vecSorted[i] << " ";
 	}
 	if (mainChain.size() < vecSorted.size())
 	{
-		std::cout << "Remaining non-participants: ";
-		for (size_t i = mainChain.size(); i < vecSorted.size(); i++)
-			std::cout << vecSorted[i] << " ";
+		//std::cout << "Remaining non-participants: ";
+		//for (size_t i = mainChain.size(); i < vecSorted.size(); i++)
+			//std::cout << vecSorted[i] << " ";
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 }
 
 void PmergeMe::vecSort(unsigned int elemSize)
@@ -134,13 +134,13 @@ void PmergeMe::vecSort(unsigned int elemSize)
 			{
 				std::swap_ranges(iter + k, iter + k + elemSize, iter + k + elemSize);
 			}
-			vecComparisons++;
+			//vecComparisons++;
 		}
 	}
-	std::cout << "iteration: ";
-	for (unsigned int l = 0; l < vecSorted.size(); l++)
-		std::cout << vecSorted[l] << " ";
-	std::cout << std::endl;
+	// std::cout << "iteration: ";
+	// for (unsigned int l = 0; l < vecSorted.size(); l++)
+	// 	std::cout << vecSorted[l] << " ";
+	// std::cout << std::endl;
 	if (elemSize * 2 <= vecSorted.size())
 		vecSort(elemSize * 2);
 	if (elemSize > 1)
@@ -151,7 +151,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		std::vector<int> pendChain;
 		if ((vecSorted.size() / elemSize) % 2 == 0)
 		{ 
-			std::cout << "We've decided we have an even number of participating elements" << std::endl;
+			//std::cout << "We've decided we have an even number of participating elements" << std::endl;
 			for (unsigned int n = 3; (n + 2) * elemSize < vecSorted.size(); n += 2)
 			{
 				for (unsigned int i = 0; i < elemSize; i++)
@@ -167,7 +167,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 				}
 			}
 			unsigned int n = (vecSorted.size() / elemSize) - 1;
-			std::cout << "Going to attempt to insert n: " << n << " to the pend Chain" << std::endl;
+			//std::cout << "Going to attempt to insert n: " << n << " to the pend Chain" << std::endl;
 			if ((n + 1) * elemSize < vecSorted.size())
 			{	
 				for (unsigned int i = 0; i < elemSize; i++)
@@ -178,7 +178,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		}
 		else
 		{
-			std::cout << "We've decided we have an odd number of participating elements" << std::endl;
+			//std::cout << "We've decided we have an odd number of participating elements" << std::endl;
 			for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
 			{
 				for (unsigned int i = 0; i < elemSize; i++)
@@ -194,14 +194,14 @@ void PmergeMe::vecSort(unsigned int elemSize)
 				}
 			}
 		}
-		std::cout << "For element size: " << elemSize << " the main chain is: " << std::endl;
-		for (unsigned int i = 0; i < mainChain.size(); i++)
-			std::cout << mainChain[i] << " ";
-		std::cout << std::endl;
-		std::cout << "pendChain is: ";
-		for (unsigned int i= 0; i < pendChain.size(); i++)
-			std::cout << pendChain[i] << " ";
-		std::cout << std::endl;
+		//std::cout << "For element size: " << elemSize << " the main chain is: " << std::endl;
+		// for (unsigned int i = 0; i < mainChain.size(); i++)
+		// 	std::cout << mainChain[i] << " ";
+		// std::cout << std::endl;
+		// std::cout << "pendChain is: ";
+		// for (unsigned int i= 0; i < pendChain.size(); i++)
+		// 	std::cout << pendChain[i] << " ";
+		// std::cout << std::endl;
 		complexMultiInsert(mainChain, pendChain, elemSize);
 		}
 	}
@@ -212,7 +212,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		std::vector<int> pendChain;
 		if ((vecSorted.size() / elemSize) % 2 == 0)
 		{
-			std::cout << "We decided we have an even number of elements" << std::endl;
+			//std::cout << "We decided we have an even number of elements" << std::endl;
 			for (unsigned int i = 1; i < vecSorted.size() - 2; i += 2)
 				mainChain.push_back(vecSorted[i]);
 			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
@@ -221,7 +221,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		}
 		else
 		{
-			std::cout << "We decided we have an odd number of elements" << std::endl;
+			//std::cout << "We decided we have an odd number of elements" << std::endl;
 			for (unsigned int i = 1; i < vecSorted.size(); i += 2)
 				mainChain.push_back(vecSorted[i]);
 			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
