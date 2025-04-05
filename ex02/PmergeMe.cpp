@@ -6,263 +6,194 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/02 17:56:45 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:07:16 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "PmergeMe.hpp"
 
-/*void PmergeMe::sortPairsInPlace()
+unsigned int PmergeMe::countUnprocessed(std::vector<bool>& processed)
 {
-	for (unsigned int i = 0; i + 1 < vecSorted.size(); i += 2)
+	unsigned int unProcessed {0};
+	for (size_t i = 0; i < processed.size(); i++)
 	{
-		if (vecSorted[i] > vecSorted[i + 1])
-		{
-			int tmp = vecSorted[i];
-			vecSorted[i] = vecSorted[i + 1];
-			vecSorted[i + 1] = tmp;
-		}
-		else
-		{
-			std::cout << vecSorted[i] << " must be less than or equal to " << vecSorted[i+1] << std::endl;
-		}
+		if (!processed[i])
+			unProcessed++;
 	}
-}*/
-int PmergeMe::binarySearchNthElement(const std::vector<int>& mainChain, int target, int elemSize)
-{
-	//unsigned int offset = elemSize - 1;
-	//unsigned int totalElements = mainChain.size() / elemSize;
-	int left = 0;
-	int mid = 0;
-	int right = (mainChain.size() - 1) / elemSize * elemSize;
-	while (left <= right) 
-	{
-		mid = left + (right - left) / (2 * elemSize) * elemSize;
-		if (mainChain[mid] == target)
-		{
-			vecComparisons++;
-			return mid;
-		}
-		if (mainChain[mid] < target)
-		{
-			vecComparisons++;
-			left = mid + elemSize;
-		}
-		else
-			right = mid - elemSize;
-	}
-	return mid;	
+	return unProcessed;
 }
 
-void PmergeMe::complexInsert(std::vector<int>& mainChain, std::vector<int>& pendChain)
+void PmergeMe::vectorMultiInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize)
 {
-	// If we get here we know we are at an element size of 1 and are doing the final insertions.
-	// This is where we will use the Jacobsthal numbers.
-	// for now:
+	std::vector<bool> processed(pendChain.size(), false); // this keeps track of what has already been inserted.
+	
 	unsigned int jacobsthalN = 1;
 	unsigned int currJacobsthal = jacobsthalNumber(jacobsthalN); // applies to two indexes less than itself because
 	// b1 was already inserted into main chain and then because we count from 0.
 	unsigned int prevJacobsthal = jacobsthalNumber(jacobsthalN - 1);
-	
-	unsigned int jacobsthalOffset = 2;
-	// how are we going to handle the indexes?
-	std::cout << "Hello from complexInsert!" << std::endl;
-	std::cout << "Main chain: ";
-	for (unsigned int i = 0; i < mainChain.size(); i++)
-		std::cout << mainChain[i] << " ";
-	std::cout << std::endl;
-	std::cout << "pendChain: ";
-	for (unsigned int i = 0; i < pendChain.size(); i++)
-		std::cout << pendChain[i] << " ";
-	std::cout << std::endl;
-	int currIndex;
-	unsigned int insertionCount;
-	while (pendChain.size() > 0)
+	while (currJacobsthal - 2 < pendChain.size() / elemSize)
 	{
-		currIndex = currJacobsthal - jacobsthalOffset;
-		insertionCount = currJacobsthal - prevJacobsthal;
-		if (insertionCount > pendChain.size())
+		int currIndex = currJacobsthal - 2;
+		if (currIndex < 0)
 			break;
-		while (currIndex >= 0 && insertionCount > 0 && pendChain.size() > insertionCount)
+		int insertionCount = currJacobsthal - prevJacobsthal;
+		while (insertionCount > 0 && currIndex >= 0)
 		{
-			//binary insertion using lower_bound? Yeah that's probably the right call.
-			auto iter = std::lower_bound(mainChain.begin(), mainChain.end(), pendChain[currIndex]);
-			mainChain.insert(iter, pendChain[currIndex]);
-			pendChain.erase(pendChain.begin() + currIndex);
-			currIndex--;
-			jacobsthalOffset++;
-			insertionCount--;
+			int sortValueIndex = currIndex * elemSize + elemSize - 1;
+			int actualPendIndex = currIndex * elemSize;
+			if (sortValueIndex < 0)
+				break;
+			if ((size_t)sortValueIndex >= pendChain.size() && pendChain.size() < elemSize)
+				break ;
+			if ((size_t)sortValueIndex >= pendChain.size())
+			{
+				sortValueIndex = elemSize - 1;
+				actualPendIndex = 0;
+			}
+				auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortValueIndex], elemSize);
+		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);
+		 		for (size_t i = 0; i < elemSize; i++)
+					processed[actualPendIndex + i] = true;
+		 	
+		insertionCount--;
+		currIndex--;
 		}
 		prevJacobsthal = currJacobsthal;
 		jacobsthalN++;
 		currJacobsthal = jacobsthalNumber(jacobsthalN);
-		std::cout << "After a set of jacobsthal number insertions" << std::endl;
-		std::cout << "Main chain: ";
-		for (unsigned int i = 0; i < mainChain.size(); i++)
-			std::cout << mainChain[i] << " ";
-		std::cout << std::endl;
-		std::cout << "pendChain: ";
-		for (unsigned int i = 0; i < pendChain.size(); i++)
-			std::cout << pendChain[i] << " ";
-		std::cout << std::endl;
 	}
-	while (pendChain.size() > 0)
+	// now we have to account for extra insertions if required (if we have complete elements left after
+	// doing jacobsthal insertions)
+	while (countUnprocessed(processed) >= elemSize)
 	{
-		currIndex = (pendChain.size() - 1);
-		auto iter = std::lower_bound(mainChain.begin(), mainChain.end(), pendChain[currIndex]);
-		mainChain.insert(iter, pendChain[currIndex]);
-		pendChain.erase(pendChain.begin() + currIndex);
-	}
-	std::cout << "In theory we are done!" << std::endl;
-	std::cout << "Main chain: ";
-	for (unsigned int i = 0; i < mainChain.size(); i++)
-		std::cout << mainChain[i] << " ";
-	std::cout << std::endl;
-	std::cout << "pendChain: ";
-	for (unsigned int i = 0; i < pendChain.size(); i++)
-		std::cout << pendChain[i] << " ";
-	std::cout << std::endl;
-	for (unsigned int i = 0; i < vecSorted.size(); i++)
-		vecSorted[i] = mainChain[i];
-}
-void PmergeMe::binaryInsert(std::vector<int>& mainChain, std::vector<int>& pendChain, unsigned int elemSize, int nonParticipants)
-{
-	std::cout << "Begin binary insertion woo" << std::endl;
-	auto iter = mainChain.begin();
-	if (elemSize - 1 < pendChain.size())
-	{
-		std::cout << "Main chain ";
-		for (unsigned int i = 0; i < mainChain.size(); i++)
-			std::cout << mainChain[i] << " ";
-		std::cout << std::endl;
-		std::cout << "Pending chain ";
-		for (unsigned int i = 0; i < pendChain.size(); i++)
-			std::cout << pendChain[i] << " ";
-		std::cout << std::endl;
-		std::cout << "We think first insertion should be based on pendChain[" << elemSize -1 << "] which is " << pendChain[elemSize - 1] << std::endl;
-		int mid = binarySearchNthElement(mainChain, pendChain[elemSize - 1], elemSize);
-		std::cout << "We think it should be inserted at mainChain[" << mid << "]" << std::endl;  
-		std::cout << "Non participants begin at: " << nonParticipants  << std::endl;
-		auto pendIter = pendChain.begin();
-		mainChain.insert(iter + mid, pendIter, pendIter + elemSize);
-		std::cout << "After insertion mainChain is now: ";
-		for (unsigned int i = 0; i < mainChain.size(); i++)
-			std::cout << mainChain[i] << " ";
-		std::cout << std::endl;
-		std::cout << "Now overwriting vecSorted " << std::endl;
-		for (unsigned int i = 0; i < mainChain.size(); i++)
+		int firstUnprocessedIndex {0};
+		for (size_t i = 0; i < processed.size(); i++)
 		{
-			vecSorted[i] = mainChain[i];
+			if (!processed[i])
+			{
+				firstUnprocessedIndex = i;
+				break ;
+			}
 		}
+		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
+		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
+		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);
+		for (size_t i = 0; i < elemSize; i++)
+			processed[firstUnprocessedIndex + i] = true;
+	}
+	for (size_t i = 0; i < mainChain.size(); i++)
+	{
+		vecSorted[i] = mainChain[i];
 	}
 }
 
-void PmergeMe::vecSort(unsigned int elem_size)
+void PmergeMe::vecSort(unsigned int elemSize)
 {
 	auto iter = vecSorted.begin();
 	unsigned int k;
 	unsigned int offset;
-	for (unsigned int i = 0; i * elem_size < vecSorted.size(); i += 2)
+	for (unsigned int i = 0; i * elemSize < vecSorted.size(); i += 2)
 	{
-		k = i * elem_size;
-		offset = elem_size - 1;
-		if (k + elem_size + offset < vecSorted.size())
+		k = i * elemSize;
+		offset = elemSize - 1;
+		if (k + elemSize + offset < vecSorted.size())
 		{ 
-			if(vecSorted[k + offset] > vecSorted[k + elem_size + offset])
+			if(vecSorted[k + offset] > vecSorted[k + elemSize + offset])
 			{
-				std::swap_ranges(iter + k, iter + k + elem_size, iter + k + elem_size);
+				std::swap_ranges(iter + k, iter + k + elemSize, iter + k + elemSize);
 			}
-			vecComparisons++;
 		}
 	}
-	std::cout << "iteration: ";
-	for (unsigned int l = 0; l < vecSorted.size(); l++)
-		std::cout << vecSorted[l] << " ";
-	std::cout << std::endl;
-	if (elem_size * 2 <= vecSorted.size())
-		vecSort(elem_size * 2);
-	if (elem_size > 1)
+	if (elemSize * 2 <= vecSorted.size())
+		vecSort(elemSize * 2);
+	if (elemSize > 1)
 	{
-		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin()+ k);
-		std::cout << "For element size: " << elem_size << " the main chain is: " << std::endl;
-		for (unsigned int i = 0; i < mainChain.size(); i++)
-			std::cout << mainChain[i] << " ";
-		std::cout << std::endl;
-		std::vector<int> pendChain;
-		int nonParticipants = k + elem_size < vecSorted.size() ? k + elem_size : -1;
-		if (k > 0 && k + offset < vecSorted.size())
+		if (vecSorted.size() / elemSize > 2)
 		{
-			std::cout << "k is " << k << " and len is " << vecSorted.size() << " so we have a leftover element" << std::endl;
-			std::cout << "Leftover element is ";
-			for (unsigned int a = k; a < vecSorted.size() && a < k + elem_size; a++)
+		std::vector<int> mainChain(vecSorted.begin(), vecSorted.begin() + elemSize * 2);
+		std::vector<int> pendChain;
+		if ((vecSorted.size() / elemSize) % 2 == 0)
+		{ 
+			for (unsigned int n = 3; (n + 2) * elemSize < vecSorted.size(); n += 2)
 			{
-				std::cout << vecSorted[a] << " ";
-				pendChain.push_back(vecSorted[a]);
-			}		
-			std::cout << std::endl;
-			// so we have leftover element that starts at vecSorted[k] and goes until k + elem_size -1
-			// that will need to be inserted based on vecSorted[k + offset]
-			std::cout << "pendChain is: ";
-			for (unsigned int i= 0; i < pendChain.size(); i++)
-				std::cout << pendChain[i] << " ";
-			std::cout << std::endl;
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			for (unsigned int n = 2; (n + 1) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			unsigned int n = (vecSorted.size() / elemSize) - 1;
+			if ((n + 1) * elemSize < vecSorted.size())
+			{	
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
 		}
-		std::cout << "Non participants identified at index: " << nonParticipants << std::endl;
-		binaryInsert(mainChain, pendChain, elem_size, nonParticipants);
+		else
+		{
+			for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+			for (unsigned int n = 2; (n) * elemSize < vecSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(vecSorted[n * elemSize + i]);
+				}
+			}
+		}
+		vectorMultiInsert(mainChain, pendChain, elemSize);
+		}
 	}
 	else
 	{
-		
 		std::vector<int> mainChain;
 		mainChain.push_back(vecSorted[0]);
-		for (unsigned int i = 1; i < vecSorted.size(); i += 2)
-			mainChain.push_back(vecSorted[i]);
 		std::vector<int> pendChain;
-		for (unsigned int i = 2; i < vecSorted.size(); i += 2)
-			pendChain.push_back(vecSorted[i]);
-		// We have to change the way these chains get built for the final case.
-		// we start from b3, do b2, then b5, b4, etc.
-		// use jacobsthal sequence until there aren't enough elements. 
-		// then just binary insertion.
-
-		complexInsert(mainChain, pendChain);
+		if ((vecSorted.size() / elemSize) % 2 == 0)
+		{
+			for (unsigned int i = 1; i < vecSorted.size() - 2; i += 2)
+				mainChain.push_back(vecSorted[i]);
+			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
+				pendChain.push_back(vecSorted[i]);
+			pendChain.push_back(vecSorted[vecSorted.size() - 1]);
+		}
+		else
+		{
+			for (unsigned int i = 1; i < vecSorted.size(); i += 2)
+				mainChain.push_back(vecSorted[i]);
+			for (unsigned int i = 2; i < vecSorted.size(); i += 2)
+				pendChain.push_back(vecSorted[i]);
+		}
+		vectorMultiInsert(mainChain, pendChain, elemSize);
 	}
-	// we need a way to flag nonparticipants;
-		// now we need to insert the pendChain
-	/*unsigned int pendLen = pendChain.size() / elem_size;
-	unsigned int currentJacobsthal = jacobsthalNumber(pendLen);
-	unsigned int previousJacobsthal;
-	std::cout << "currentJacobsthal: " << currentJacobsthal << std::endl;*/
-	//if (pendLen > 0)
-	//{
-	//	previousJacobsthal = jacobsthalNumber(pendLen - 1);
-//	}
-	//else
-	//	previousJacobsthal = 1;
-	//std::cout << "previousJacobsthal: " << previousJacobsthal << std::endl;
-	//unsigned int numInsertedElements = currentJacobsthal - previousJacobsthal;
-	//std::cout << "numInsertedElements: " << numInsertedElements << std::endl;
-	// not sure how this helps at all. but here is the failsafe:
-	// 
 }
 
 unsigned int PmergeMe::jacobsthalNumber(unsigned int n)
 {
 	// starts with 0 and 1, then we add the previous number plus double the number before that
-	// and we skip the first two to match the book
+	// and we skip the first two to match the book referenced in the subject
 	if (n == 0)
 		return 1;
 	std::vector<unsigned int> jacobsthalNums(n + 1);
 	jacobsthalNums[0] = 1;
 	jacobsthalNums[1] = 3;
-	//std::cout << "Jacobsthal sequence: ";
-	//std::cout << jacobsthalNums[0] << " " << jacobsthalNums[1] << " ";
 	for (unsigned int i = 2; i <= n; i++)
 	{
 		jacobsthalNums[i] = jacobsthalNums[i-1] + (2 * jacobsthalNums[i - 2]);
-		//std::cout << jacobsthalNums[i] << " ";
 	}
-	//std::cout << std::endl;
 	return jacobsthalNums[n];
 }
 
@@ -274,33 +205,240 @@ bool PmergeMe::validateArgs()
 		try{
 			num = std::stoi(rawArgs[i]);
 			if (num < 0)
-				return false;	
-			else vecUnsorted.push_back(num);
+			{
+				std::cerr << "ERROR: Only positive integers accepted" << std::endl;
+				return false;
+			}		
+			else
+			{ 
+				vecUnsorted.push_back(num);
+				dequeUnsorted.push_back(num);
+			}
 		}
 		catch (const std::exception& e)
 		{
+			std::cerr << "ERROR: " << e.what() << " cannot convert argv["<< i << "]: " << rawArgs[i] << std::endl;
 			return false;
 		}
 	}
 	return true;
 }
 
+#include "PmergeMe.hpp"
+
+unsigned int PmergeMe::countUnprocessed(std::deque<bool>& processed)
+{
+	unsigned int unProcessed {0};
+	for (size_t i = 0; i < processed.size(); i++)
+	{
+		if (!processed[i])
+			unProcessed++;
+	}
+	return unProcessed;
+}
+
+void PmergeMe::dequeMultiInsert(std::deque<int>& mainChain, std::deque<int>& pendChain, unsigned int elemSize)
+{
+	std::deque<bool> processed(pendChain.size(), false); // this keeps track of what has already been inserted.
+	
+	unsigned int jacobsthalN = 1;
+	unsigned int currJacobsthal = jacobsthalNumber(jacobsthalN); // applies to two indexes less than itself because
+	// b1 was already inserted into main chain and then because we count from 0.
+	unsigned int prevJacobsthal = jacobsthalNumber(jacobsthalN - 1);
+	while (currJacobsthal - 2 < pendChain.size() / elemSize)
+	{
+		int currIndex = currJacobsthal - 2;
+		if (currIndex < 0)
+			break;
+		int insertionCount = currJacobsthal - prevJacobsthal;
+		while (insertionCount > 0 && currIndex >= 0)
+		{
+			int sortValueIndex = currIndex * elemSize + elemSize - 1;
+			int actualPendIndex = currIndex * elemSize;
+			if (sortValueIndex < 0)
+				break;
+			if ((size_t)sortValueIndex >= pendChain.size() && pendChain.size() < elemSize)
+				break ;
+			if ((size_t)sortValueIndex >= pendChain.size())
+			{
+				sortValueIndex = elemSize - 1;
+				actualPendIndex = 0;
+			}
+				auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortValueIndex], elemSize);
+		 		mainChain.insert(iter, pendChain.begin() + actualPendIndex, pendChain.begin() + actualPendIndex + elemSize);
+		 		for (size_t i = 0; i < elemSize; i++)
+					processed[actualPendIndex + i] = true;
+		 	
+		insertionCount--;
+		currIndex--;
+		}
+		prevJacobsthal = currJacobsthal;
+		jacobsthalN++;
+		currJacobsthal = jacobsthalNumber(jacobsthalN);
+	}
+	// now we have to account for extra insertions if required (if we have complete elements left after
+	// doing jacobsthal insertions)
+	while (countUnprocessed(processed) >= elemSize)
+	{
+		int firstUnprocessedIndex {0};
+		for (size_t i = 0; i < processed.size(); i++)
+		{
+			if (!processed[i])
+			{
+				firstUnprocessedIndex = i;
+				break ;
+			}
+		}
+		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
+		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
+		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);
+		for (size_t i = 0; i < elemSize; i++)
+			processed[firstUnprocessedIndex + i] = true;
+	}
+	for (size_t i = 0; i < mainChain.size(); i++)
+	{
+		dequeSorted[i] = mainChain[i];
+	}
+}
+
+void PmergeMe::dequeSort(unsigned int elemSize)
+{
+	auto iter = dequeSorted.begin();
+	unsigned int k;
+	unsigned int offset;
+	for (unsigned int i = 0; i * elemSize < dequeSorted.size(); i += 2)
+	{
+		k = i * elemSize;
+		offset = elemSize - 1;
+		if (k + elemSize + offset < dequeSorted.size())
+		{ 
+			if(dequeSorted[k + offset] > dequeSorted[k + elemSize + offset])
+			{
+				std::swap_ranges(iter + k, iter + k + elemSize, iter + k + elemSize);
+			}
+		}
+	}
+	if (elemSize * 2 <= dequeSorted.size())
+		dequeSort(elemSize * 2);
+	if (elemSize > 1)
+	{
+		if (dequeSorted.size() / elemSize > 2)
+		{
+		std::deque<int> mainChain(dequeSorted.begin(), dequeSorted.begin() + elemSize * 2);
+		std::deque<int> pendChain;
+		if ((dequeSorted.size() / elemSize) % 2 == 0)
+		{ 
+			for (unsigned int n = 3; (n + 2) * elemSize < dequeSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(dequeSorted[n * elemSize + i]);
+				}
+			}
+			for (unsigned int n = 2; (n + 1) * elemSize < dequeSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(dequeSorted[n * elemSize + i]);
+				}
+			}
+			unsigned int n = (dequeSorted.size() / elemSize) - 1;
+			if ((n + 1) * elemSize < dequeSorted.size())
+			{	
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(dequeSorted[n * elemSize + i]);
+				}
+			}
+		}
+		else
+		{
+			for (unsigned int n = 3; (n + 1) * elemSize < dequeSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					mainChain.push_back(dequeSorted[n * elemSize + i]);
+				}
+			}
+			for (unsigned int n = 2; (n) * elemSize < dequeSorted.size(); n += 2)
+			{
+				for (unsigned int i = 0; i < elemSize; i++)
+				{
+					pendChain.push_back(dequeSorted[n * elemSize + i]);
+				}
+			}
+		}
+		dequeMultiInsert(mainChain, pendChain, elemSize);
+		}
+	}
+	else
+	{
+		std::deque<int> mainChain;
+		mainChain.push_back(dequeSorted[0]);
+		std::deque<int> pendChain;
+		if ((dequeSorted.size() / elemSize) % 2 == 0)
+		{
+			for (unsigned int i = 1; i < dequeSorted.size() - 2; i += 2)
+				mainChain.push_back(dequeSorted[i]);
+			for (unsigned int i = 2; i < dequeSorted.size(); i += 2)
+				pendChain.push_back(dequeSorted[i]);
+			pendChain.push_back(dequeSorted[dequeSorted.size() - 1]);
+		}
+		else
+		{
+			for (unsigned int i = 1; i < dequeSorted.size(); i += 2)
+				mainChain.push_back(dequeSorted[i]);
+			for (unsigned int i = 2; i < dequeSorted.size(); i += 2)
+				pendChain.push_back(dequeSorted[i]);
+		}
+		dequeMultiInsert(mainChain, pendChain, elemSize);
+	}
+}
+
+unsigned int PmergeMe::dequeJacobsthalNumber(unsigned int n)
+{
+	// starts with 0 and 1, then we add the previous number plus double the number before that
+	// and we skip the first two to match the book referenced in the subject
+	if (n == 0)
+		return 1;
+	std::deque<unsigned int> jacobsthalNums(n + 1);
+	jacobsthalNums[0] = 1;
+	jacobsthalNums[1] = 3;
+	for (unsigned int i = 2; i <= n; i++)
+	{
+		jacobsthalNums[i] = jacobsthalNums[i-1] + (2 * jacobsthalNums[i - 2]);
+	}
+	return jacobsthalNums[n];
+}
+
 PmergeMe::PmergeMe(char **argv, int argc) :  _argc(argc), rawArgs((const char**)argv)
 {
-	validateArgs();
+	if (!validateArgs())
+	{
+		exit(EXIT_FAILURE);
+	}
 	vecSorted = vecUnsorted;
 	std::cout << "Unsorted vector: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
-		std::cout << vecUnsorted[i] << ", ";
+		std::cout << vecUnsorted[i] << " ";
 	std::cout << std::endl;
 	vecSort(1);
-	//sortPairsInPlace();
-	std::cout << "Pairs sorted: ";  
+	std::cout << "Sorted vector: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
-		std::cout << vecSorted[i] << ", ";
+		std::cout << vecSorted[i] << " ";
 	std::cout << std::endl;
-	std::cout << "vecComparisons so far: " << vecComparisons << std::endl;
+	dequeSorted = dequeUnsorted;
+	std::cout << "Unsorted deque: ";
+	for (size_t i = 0; i < dequeUnsorted.size(); i++)
+		std::cout << dequeUnsorted[i] << " ";
+	std::cout << std::endl;
+	dequeSort(1);
+	std::cout << "Sorted deque: ";
+	for (size_t i = 0; i < dequeSorted.size(); i++)
+		std::cout << dequeSorted[i] << " ";
+	std::cout << std::endl;
 }
+
 PmergeMe::~PmergeMe()
 {
 }

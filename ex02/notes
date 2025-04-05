@@ -1,3 +1,14 @@
+FIXED: ANYTHING with 17-19 numbers doesn't work, causes an overflow. 
+
 ./PmergeMe 10 1 9 2 6 3 4 7 5 8 11 12 13
 
-This doesn't sort properly at present. Something is wrong with my recursion unwinding.
+FIXED: This doesn't sort properly at present. Something is wrong with my recursion unwinding.
+
+FIXED: to deal with nonparticipants or odd elements in ComplexInsert(), we sometimes have the last 
+item in the wrong place.
+
+Check COMPILER FLAGS
+
+FIXED: Our template function for comparisons isn't actually using binary search. It needs to.
+
+We are currently ignoring negative numbers and allowing duplicates. Need to reevaluate if this is the intended behavior.
