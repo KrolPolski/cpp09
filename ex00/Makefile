@@ -6,12 +6,12 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/31 15:45:02 by rboudwin          #+#    #+#              #
-#    Updated: 2025/01/09 12:10:33 by rboudwin         ###   ########.fr        #
+#    Updated: 2025/04/05 14:55:20 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	:= btc
-CFLAGS  := -Wextra -Wall -Werror -std=c++11 -fsanitize=address
+CFLAGS  := -Wextra -Wall -Werror -std=c++11
 SRCS	:= main.cpp BitcoinExchange.cpp
 OBJS	:= ${SRCS:.cpp=.o}
 
