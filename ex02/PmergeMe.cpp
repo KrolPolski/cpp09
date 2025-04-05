@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 14:07:16 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 14:42:01 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -413,30 +413,33 @@ unsigned int PmergeMe::dequeJacobsthalNumber(unsigned int n)
 
 PmergeMe::PmergeMe(char **argv, int argc) :  _argc(argc), rawArgs((const char**)argv)
 {
+	
 	if (!validateArgs())
 	{
 		exit(EXIT_FAILURE);
 	}
-	vecSorted = vecUnsorted;
-	std::cout << "Unsorted vector: ";  
+	
+	std::cout << "Before: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
 		std::cout << vecUnsorted[i] << " ";
 	std::cout << std::endl;
+	auto vecStart = std::chrono::high_resolution_clock::now();
+	vecSorted = vecUnsorted;
 	vecSort(1);
-	std::cout << "Sorted vector: ";  
+	auto vecEnd = std::chrono::high_resolution_clock::now();
+	auto vecDuration = std::chrono::duration_cast<std::chrono::microseconds>(vecEnd - vecStart);
+	std::cout << "After: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
 		std::cout << vecSorted[i] << " ";
 	std::cout << std::endl;
+	std::cout << "Time to process a range of " << vecUnsorted.size() << " elements with std::vector: " << vecDuration.count() << " us" << std::endl;
+	auto dequeStart = std::chrono::high_resolution_clock::now();
 	dequeSorted = dequeUnsorted;
-	std::cout << "Unsorted deque: ";
-	for (size_t i = 0; i < dequeUnsorted.size(); i++)
-		std::cout << dequeUnsorted[i] << " ";
-	std::cout << std::endl;
 	dequeSort(1);
-	std::cout << "Sorted deque: ";
-	for (size_t i = 0; i < dequeSorted.size(); i++)
-		std::cout << dequeSorted[i] << " ";
-	std::cout << std::endl;
+	auto dequeEnd = std::chrono::high_resolution_clock::now();
+	auto dequeDuration = std::chrono::duration_cast<std::chrono::microseconds>(dequeEnd - dequeStart);
+	std::cout << "Time to process a range of " << dequeUnsorted.size() << " elements with std::deque: " << dequeDuration.count() << " us" << std::endl;
+	
 }
 
 PmergeMe::~PmergeMe()
