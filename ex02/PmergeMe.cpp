@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 13:33:19 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:53:52 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -259,7 +259,11 @@ bool PmergeMe::validateArgs()
 				std::cerr << "ERROR: Only positive integers accepted" << std::endl;
 				return false;
 			}		
-			else vecUnsorted.push_back(num);
+			else
+			{ 
+				vecUnsorted.push_back(num);
+				dequeUnsorted.push_back(num);
+			}
 		}
 		catch (const std::exception& e)
 		{
@@ -285,6 +289,15 @@ PmergeMe::PmergeMe(char **argv, int argc) :  _argc(argc), rawArgs((const char**)
 	std::cout << "Sorted vector: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
 		std::cout << vecSorted[i] << " ";
+	std::cout << std::endl;
+	dequeSorted = dequeUnsorted;
+	std::cout << "Unsorted deque: ";
+	for (size_t i = 0; i < dequeUnsorted.size(); i++)
+		std::cout << dequeUnsorted[i] << " ";
+	std::cout << std::endl;
+	std::cout << "Sorted deque: ";
+	for (size_t i = 0; i < dequeSorted.size(); i++)
+		std::cout << dequeSorted[i] << " ";
 	std::cout << std::endl;
 }
 

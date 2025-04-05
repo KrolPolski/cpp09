@@ -6,12 +6,13 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:39 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 13:17:12 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:52:39 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <vector>
+#include <deque>
 #include <list>
 #include <iostream>
 #include <string>
@@ -20,9 +21,9 @@ class PmergeMe
 {
 private:
 	std::vector<int> vecUnsorted;
-	std::list<int>	listUnsorted;
+	std::deque<int>	dequeUnsorted;
 	std::vector<int> vecSorted;
-	std::list<int> listSorted;
+	std::deque<int> dequeSorted;
 	int _argc;
 	const char **rawArgs;
 	//unsigned int vecComparisons {0};
