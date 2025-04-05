@@ -1,0 +1,5 @@
+RPN FAILED:
+
+Ryan's implementations compiled and met subject and evaluation form requirements, producing expected results. In ex01, however, there was no check to see that the expression had the correct number of operators, ie in the end there should only be one number left in the stack. Additionally giving the program an empty string as an argument produced a segfault. Easy fixes, you got this. Regarding ex02, the implementation seemed sound and you were able to explain the algorithm well. Good work!
+
+Once this is resolved project is done.
