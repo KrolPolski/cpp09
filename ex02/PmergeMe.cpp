@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 13:20:33 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:33:19 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,11 +255,15 @@ bool PmergeMe::validateArgs()
 		try{
 			num = std::stoi(rawArgs[i]);
 			if (num < 0)
-				return false;	
+			{
+				std::cerr << "ERROR: Only positive integers accepted" << std::endl;
+				return false;
+			}		
 			else vecUnsorted.push_back(num);
 		}
 		catch (const std::exception& e)
 		{
+			std::cerr << "ERROR: " << e.what() << " cannot convert argv["<< i << "]: " << rawArgs[i] << std::endl;
 			return false;
 		}
 	}
@@ -268,7 +272,10 @@ bool PmergeMe::validateArgs()
 
 PmergeMe::PmergeMe(char **argv, int argc) :  _argc(argc), rawArgs((const char**)argv)
 {
-	validateArgs();
+	if (!validateArgs())
+	{
+		exit(EXIT_FAILURE);
+	}
 	vecSorted = vecUnsorted;
 	std::cout << "Unsorted vector: ";  
 	for (unsigned int i = 0; i < vecUnsorted.size(); i++)
