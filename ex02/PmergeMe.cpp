@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/04 16:30:20 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/05 12:15:21 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,7 +309,7 @@ void PmergeMe::vecSort(unsigned int elemSize)
 		if ((vecSorted.size() / elemSize) % 2 == 0)
 		{ 
 			std::cout << "We've decided we have an even number of participating elements" << std::endl;
-			for (unsigned int n = 3; (n + 1) * elemSize < vecSorted.size(); n += 2)
+			for (unsigned int n = 3; (n + 2) * elemSize < vecSorted.size(); n += 2)
 			{
 				for (unsigned int i = 0; i < elemSize; i++)
 				{
@@ -325,9 +325,11 @@ void PmergeMe::vecSort(unsigned int elemSize)
 			}
 			unsigned int n = (vecSorted.size() / elemSize) - 1;
 			std::cout << "Going to attempt to insert n: " << n << " to the pend Chain" << std::endl;
-			for (unsigned int i = 0; i < elemSize; i++)
+			if ((n + 1) * elemSize < vecSorted.size())
+			{	for (unsigned int i = 0; i < elemSize; i++)
 			{
 				pendChain.push_back(vecSorted[n * elemSize + i]);
+			}
 			}
 		}
 		else
