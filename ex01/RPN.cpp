@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 13:11:57 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/03/04 16:31:50 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/06 13:26:30 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <cstdlib>
 bool RPN::validateArgs()
 {
+    if (_args == "")
+        return false;
     std::istringstream iss(_args);
     std::string word;
     std::string allowed {"0123456789+-*/"};
@@ -71,6 +73,11 @@ double RPN::calculate()
             _calcStack.push(stod(word));
         else
             handleOperator(word[0]);
+    }
+    if (_calcStack.size() != 1)
+    {
+        std::cerr << "Error" << std::endl;
+        exit(EXIT_FAILURE);
     }
     return (_calcStack.top());
 }
