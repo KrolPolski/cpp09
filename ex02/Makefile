@@ -6,13 +6,13 @@
 #    By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/07 10:35:46 by rboudwin          #+#    #+#              #
-#    Updated: 2025/04/05 14:55:33 by rboudwin         ###   ########.fr        #
+#    Updated: 2025/04/11 11:58:35 by rboudwin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 NAME	:= PmergeMe
-CFLAGS  := -Wall -Wextra -Werror -std=c++20
+CFLAGS  := -Wall -Wextra -Werror -std=c++11
 SRCS	:= main.cpp PmergeMe.cpp
 OBJS	:= ${SRCS:.cpp=.o}
 
