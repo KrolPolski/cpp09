@@ -6,7 +6,7 @@
 /*   By: rboudwin <rboudwin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 10:35:31 by rboudwin          #+#    #+#             */
-/*   Updated: 2025/04/05 14:42:01 by rboudwin         ###   ########.fr       */
+/*   Updated: 2025/04/11 11:33:18 by rboudwin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,20 +66,20 @@ void PmergeMe::vectorMultiInsert(std::vector<int>& mainChain, std::vector<int>& 
 	// doing jacobsthal insertions)
 	while (countUnprocessed(processed) >= elemSize)
 	{
-		int firstUnprocessedIndex {0};
-		for (size_t i = 0; i < processed.size(); i++)
+		int lastUnprocessedIndex {0};
+		for (size_t i = processed.size() - 1; i >= 0; i--)
 		{
 			if (!processed[i])
 			{
-				firstUnprocessedIndex = i;
+				lastUnprocessedIndex = i - (elemSize - 1);
 				break ;
 			}
 		}
-		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
+		int sortableIndex = lastUnprocessedIndex + elemSize - 1;
 		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
-		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);
+		mainChain.insert(iter, pendChain.begin() + lastUnprocessedIndex, pendChain.begin() + lastUnprocessedIndex + elemSize);
 		for (size_t i = 0; i < elemSize; i++)
-			processed[firstUnprocessedIndex + i] = true;
+			processed[lastUnprocessedIndex + i] = true;
 	}
 	for (size_t i = 0; i < mainChain.size(); i++)
 	{
@@ -278,26 +278,28 @@ void PmergeMe::dequeMultiInsert(std::deque<int>& mainChain, std::deque<int>& pen
 	}
 	// now we have to account for extra insertions if required (if we have complete elements left after
 	// doing jacobsthal insertions)
+	// now we have to account for extra insertions if required (if we have complete elements left after
+	// doing jacobsthal insertions)
 	while (countUnprocessed(processed) >= elemSize)
 	{
-		int firstUnprocessedIndex {0};
-		for (size_t i = 0; i < processed.size(); i++)
+		int lastUnprocessedIndex {0};
+		for (size_t i = processed.size() - 1; i >= 0; i--)
 		{
 			if (!processed[i])
 			{
-				firstUnprocessedIndex = i;
+				lastUnprocessedIndex = i - (elemSize - 1);
 				break ;
 			}
 		}
-		int sortableIndex = firstUnprocessedIndex + elemSize - 1;
+		int sortableIndex = lastUnprocessedIndex + elemSize - 1;
 		auto iter = partial_lower_bound(mainChain.begin(), mainChain.end(), pendChain[sortableIndex], elemSize);
-		mainChain.insert(iter, pendChain.begin() + firstUnprocessedIndex, pendChain.begin() + firstUnprocessedIndex + elemSize);
+		mainChain.insert(iter, pendChain.begin() + lastUnprocessedIndex, pendChain.begin() + lastUnprocessedIndex + elemSize);
 		for (size_t i = 0; i < elemSize; i++)
-			processed[firstUnprocessedIndex + i] = true;
+			processed[lastUnprocessedIndex + i] = true;
 	}
 	for (size_t i = 0; i < mainChain.size(); i++)
 	{
-		dequeSorted[i] = mainChain[i];
+		vecSorted[i] = mainChain[i];
 	}
 }
 
